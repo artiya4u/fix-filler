@@ -64,7 +64,7 @@ function renderRules() {
       <div class="rule-info">
         <div class="rule-name">${escapeHtml(rule.name)}</div>
         <div class="rule-details">
-          <div><strong>Selector:</strong> ${escapeHtml(rule.selector)}</div>
+<!--          <div><strong>Selector:</strong> ${escapeHtml(rule.selector)}</div>-->
           <div><strong>Value:</strong> ${escapeHtml(rule.value)}</div>
         </div>
       </div>
