@@ -3,7 +3,6 @@
     "enabled": true,
     "name": "เลขประจำตัวประชาชน",
     "selectors": [
-      "input[placeholder=\"กรุณาค้นหาด้วยเลขประจำตัวประชาชน หรือเลขพาสปอร์ต\"]",
       "input[name=\"r_idcard\"]",
       "input[name=\"idcard\"]"
     ],
@@ -53,7 +52,6 @@
     "enabled": true,
     "name": "เบอร์โทรศัพท์ 10 หลัก",
     "selectors": [
-      "input[placeholder=\"กรุณาใส่เบอร์โทรศัพท์ 10 หลัก\"]",
       "input[name=\"r_tel\"]"
     ],
     "value": "0988889999"
