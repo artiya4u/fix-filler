@@ -303,9 +303,9 @@ function showNotification(filledCount, errorCount, errors) {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #ffe0e6;
-    border: 1px solid #ec1436;
-    color: #8b0a1f;
+    background: #d4edda;
+    border: 1px solid #28a745;
+    color: #155724;
     padding: 16px 20px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
