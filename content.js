@@ -29,6 +29,7 @@ async function fillForm(rules) {
         }
 
         let foundAnyElements = false;
+        let filledAnyElements = false;
 
         // Process each selector in the rule
         for (const selector of selectors) {
@@ -41,6 +42,7 @@ async function fillForm(rules) {
             }
 
             foundAnyElements = true;
+            let selectorFilledElements = false;
 
             for (let index = 0; index < elements.length; index++) {
               const element = elements[index];
@@ -48,6 +50,8 @@ async function fillForm(rules) {
                 await fillElement(element, rule.value);
                 console.log(`[Fix Filler] Filled element ${index + 1}/${elements.length} for selector "${selector}" in rule: ${rule.name}`);
                 filledCount++;
+                selectorFilledElements = true;
+                filledAnyElements = true;
 
                 // Add a small delay between filling different inputs to ensure proper event processing
                 if (index < elements.length - 1) {
@@ -59,10 +63,12 @@ async function fillForm(rules) {
               }
             }
 
-            // Add a small delay between different selectors to ensure proper event processing
-            const selectorIndex = selectors.indexOf(selector);
-            if (selectorIndex < selectors.length - 1) {
-              await new Promise(resolve => setTimeout(resolve, 100));
+            // Add a small delay between different selectors only if we filled elements
+            if (selectorFilledElements) {
+              const selectorIndex = selectors.indexOf(selector);
+              if (selectorIndex < selectors.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+              }
             }
           } catch (error) {
             console.log(`[Fix Filler] Error processing selector ${selector} in rule ${rule.name}:`, error);
@@ -76,10 +82,12 @@ async function fillForm(rules) {
           errorCount++;
         }
 
-        // Add a small delay between different rules to ensure proper event processing
-        const ruleIndex = rules.indexOf(rule);
-        if (ruleIndex < rules.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+        // Add a small delay between different rules only if we filled elements
+        if (filledAnyElements) {
+          const ruleIndex = rules.indexOf(rule);
+          if (ruleIndex < rules.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
         }
       } catch (error) {
         console.log(`[Fix Filler] Error processing rule ${rule.name}:`, error);
