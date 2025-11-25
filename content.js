@@ -8,73 +8,186 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Fill form with provided rules
-function fillForm(rules) {
+async function fillForm(rules) {
   let filledCount = 0;
   let errorCount = 0;
   const errors = [];
 
   console.log('[Fix Filler] Starting to fill form with', rules.length, 'rules');
 
-  rules.forEach(rule => {
-    try {
-      // Support both old (selector) and new (selectors) format
-      const selectors = rule.selectors || (rule.selector ? [rule.selector] : []);
+  try {
+    for (const rule of rules) {
+      try {
+        // Support both old (selector) and new (selectors) format
+        const selectors = rule.selectors || (rule.selector ? [rule.selector] : []);
 
-      if (selectors.length === 0) {
-        console.warn(`[Fix Filler] No selectors defined for rule: ${rule.name}`);
-        errors.push(`No selectors for: ${rule.name}`);
-        errorCount++;
-        return;
-      }
+        if (selectors.length === 0) {
+          console.log(`[Fix Filler] No selectors defined for rule: ${rule.name}`);
+          errors.push(`No selectors for: ${rule.name}`);
+          errorCount++;
+          continue;
+        }
 
-      let foundAnyElements = false;
+        let foundAnyElements = false;
 
-      // Process each selector in the rule
-      selectors.forEach(selector => {
-        try {
-          const elements = document.querySelectorAll(selector);
+        // Process each selector in the rule
+        for (const selector of selectors) {
+          try {
+            const elements = document.querySelectorAll(selector);
 
-          if (elements.length === 0) {
-            console.warn(`[Fix Filler] No elements found for selector: ${selector}`);
-            return;
-          }
-
-          foundAnyElements = true;
-
-          elements.forEach((element, index) => {
-            try {
-              fillElement(element, rule.value);
-              console.log(`[Fix Filler] Filled element ${index + 1}/${elements.length} for selector "${selector}" in rule: ${rule.name}`);
-              filledCount++;
-            } catch (error) {
-              console.error(`[Fix Filler] Error filling element for rule ${rule.name}, selector ${selector}:`, error);
-              errorCount++;
+            if (elements.length === 0) {
+              console.log(`[Fix Filler] No elements found for selector: ${selector}`);
+              continue;
             }
-          });
-        } catch (error) {
-          console.error(`[Fix Filler] Error processing selector ${selector} in rule ${rule.name}:`, error);
-          errors.push(`Error in selector "${selector}" for rule "${rule.name}": ${error.message}`);
+
+            foundAnyElements = true;
+
+            for (let index = 0; index < elements.length; index++) {
+              const element = elements[index];
+              try {
+                await fillElement(element, rule.value);
+                console.log(`[Fix Filler] Filled element ${index + 1}/${elements.length} for selector "${selector}" in rule: ${rule.name}`);
+                filledCount++;
+
+                // Add a small delay between filling different inputs to ensure proper event processing
+                if (index < elements.length - 1) {
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                }
+              } catch (error) {
+                console.log(`[Fix Filler] Error filling element for rule ${rule.name}, selector ${selector}:`, error);
+                errorCount++;
+              }
+            }
+
+            // Add a small delay between different selectors to ensure proper event processing
+            const selectorIndex = selectors.indexOf(selector);
+            if (selectorIndex < selectors.length - 1) {
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          } catch (error) {
+            console.log(`[Fix Filler] Error processing selector ${selector} in rule ${rule.name}:`, error);
+            errors.push(`Error in selector "${selector}" for rule "${rule.name}": ${error.message}`);
+            errorCount++;
+          }
+        }
+
+        if (!foundAnyElements) {
+          errors.push(`No elements found for any selector in: ${rule.name}`);
           errorCount++;
         }
-      });
 
-      if (!foundAnyElements) {
-        errors.push(`No elements found for any selector in: ${rule.name}`);
+        // Add a small delay between different rules to ensure proper event processing
+        const ruleIndex = rules.indexOf(rule);
+        if (ruleIndex < rules.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.log(`[Fix Filler] Error processing rule ${rule.name}:`, error);
+        errors.push(`Error in rule "${rule.name}": ${error.message}`);
         errorCount++;
       }
-    } catch (error) {
-      console.error(`[Fix Filler] Error processing rule ${rule.name}:`, error);
-      errors.push(`Error in rule "${rule.name}": ${error.message}`);
-      errorCount++;
     }
-  });
+  } finally {
+    console.log('[Fix Filler] Restored original dialog functions');
+  }
 
   // Show notification
   showNotification(filledCount, errorCount, errors);
 }
 
+// Simulate keyboard typing into an element
+async function simulateTyping(element, text) {
+  // Focus the element first
+  element.focus();
+
+  // Clear existing value
+  element.value = '';
+
+  // Type each character
+  const textStr = String(text);
+  for (let i = 0; i < textStr.length; i++) {
+    const char = textStr[i];
+
+    // Dispatch keydown event
+    const keydownEvent = new KeyboardEvent('keydown', {
+      key: char,
+      code: `Key${char.toUpperCase()}`,
+      charCode: char.charCodeAt(0),
+      keyCode: char.charCodeAt(0),
+      which: char.charCodeAt(0),
+      bubbles: true,
+      cancelable: true
+    });
+    element.dispatchEvent(keydownEvent);
+
+    // Dispatch keypress event
+    const keypressEvent = new KeyboardEvent('keypress', {
+      key: char,
+      code: `Key${char.toUpperCase()}`,
+      charCode: char.charCodeAt(0),
+      keyCode: char.charCodeAt(0),
+      which: char.charCodeAt(0),
+      bubbles: true,
+      cancelable: true
+    });
+    element.dispatchEvent(keypressEvent);
+
+    // Update the value
+    element.value += char;
+
+    // Trigger native setter for React compatibility
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value'
+    )?.set;
+
+    const nativeTextareaValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLTextAreaElement.prototype,
+      'value'
+    )?.set;
+
+    if (element.tagName === 'INPUT' && nativeInputValueSetter) {
+      nativeInputValueSetter.call(element, element.value);
+    } else if (element.tagName === 'TEXTAREA' && nativeTextareaValueSetter) {
+      nativeTextareaValueSetter.call(element, element.value);
+    }
+
+    // Dispatch input event
+    const inputEvent = new InputEvent('input', {
+      data: char,
+      inputType: 'insertText',
+      bubbles: true,
+      cancelable: true
+    });
+    element.dispatchEvent(inputEvent);
+
+    // Dispatch keyup event
+    const keyupEvent = new KeyboardEvent('keyup', {
+      key: char,
+      code: `Key${char.toUpperCase()}`,
+      charCode: char.charCodeAt(0),
+      keyCode: char.charCodeAt(0),
+      which: char.charCodeAt(0),
+      bubbles: true,
+      cancelable: true
+    });
+    element.dispatchEvent(keyupEvent);
+
+    // Small delay between characters to simulate real typing
+    await new Promise(resolve => setTimeout(resolve, 5));
+  }
+
+  // Dispatch change event after typing is complete
+  const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+  element.dispatchEvent(changeEvent);
+
+  // Dispatch blur event
+  const blurEvent = new Event('blur', { bubbles: true, cancelable: true });
+  element.dispatchEvent(blurEvent);
+}
+
 // Fill individual element
-function fillElement(element, value) {
+async function fillElement(element, value) {
   const tagName = element.tagName.toLowerCase();
   const type = element.type ? element.type.toLowerCase() : '';
 
@@ -84,14 +197,17 @@ function fillElement(element, value) {
       // For checkboxes and radio buttons, check if value is truthy
       element.checked = Boolean(value);
     } else if (type === 'file') {
-      console.warn('[Fix Filler] File inputs cannot be filled programmatically');
+      console.log('[Fix Filler] File inputs cannot be filled programmatically');
       return;
     } else {
-      // For text, email, password, number, etc.
-      element.value = value;
+      // For text, email, password, number, etc. - use keyboard typing simulation
+      await simulateTyping(element, value);
+      return; // Return early since simulateTyping handles all events
     }
   } else if (tagName === 'textarea') {
-    element.value = value;
+    // Use keyboard typing simulation for textareas
+    await simulateTyping(element, value);
+    return; // Return early since simulateTyping handles all events
   } else if (tagName === 'select') {
     // Try to find matching option by value or text
     let optionSet = false;
@@ -194,15 +310,15 @@ function showNotification(filledCount, errorCount, errors) {
 
   let message = `Fix Filler: Filled ${filledCount} field${filledCount !== 1 ? 's' : ''}`;
 
-  if (errorCount > 0) {
-    message += `\n${errorCount} error${errorCount !== 1 ? 's' : ''} occurred`;
-    if (errors.length > 0) {
-      message += '\n\nErrors:\n' + errors.slice(0, 3).join('\n');
-      if (errors.length > 3) {
-        message += `\n... and ${errors.length - 3} more`;
-      }
-    }
-  }
+  // if (errorCount > 0) {
+  //   message += `\n${errorCount} error${errorCount !== 1 ? 's' : ''} occurred`;
+  //   if (errors.length > 0) {
+  //     message += '\n\nErrors:\n' + errors.slice(0, 3).join('\n');
+  //     if (errors.length > 3) {
+  //       message += `\n... and ${errors.length - 3} more`;
+  //     }
+  //   }
+  // }
 
   notification.textContent = message;
   notification.style.whiteSpace = 'pre-line';
@@ -278,12 +394,12 @@ async function autoFillOnLoad() {
             const elements = document.querySelectorAll(selector);
             return elements.length > 0;
           } catch (error) {
-            console.warn(`[Fix Filler] Invalid selector: ${selector}`, error);
+            console.log(`[Fix Filler] Invalid selector: ${selector}`, error);
             return false;
           }
         });
       } catch (error) {
-        console.warn(`[Fix Filler] Error processing rule: ${rule.name}`, error);
+        console.log(`[Fix Filler] Error processing rule: ${rule.name}`, error);
         return false;
       }
     });
@@ -302,7 +418,7 @@ async function autoFillOnLoad() {
     }, autoFillDelay);
 
   } catch (error) {
-    console.error('[Fix Filler] Error in auto-fill on load:', error);
+    console.log('[Fix Filler] Error in auto-fill on load:', error);
   }
 }
 
