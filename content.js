@@ -295,9 +295,9 @@ function showNotification(filledCount, errorCount, errors) {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: ${errorCount > 0 ? '#fff3cd' : '#d4edda'};
-    border: 1px solid ${errorCount > 0 ? '#ffc107' : '#28a745'};
-    color: ${errorCount > 0 ? '#856404' : '#155724'};
+    background: #d4edda;
+    border: 1px solid #28a745;
+    color: #155724;
     padding: 16px 20px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -309,16 +309,6 @@ function showNotification(filledCount, errorCount, errors) {
   `;
 
   let message = `Fix Filler: Filled ${filledCount} field${filledCount !== 1 ? 's' : ''}`;
-
-  // if (errorCount > 0) {
-  //   message += `\n${errorCount} error${errorCount !== 1 ? 's' : ''} occurred`;
-  //   if (errors.length > 0) {
-  //     message += '\n\nErrors:\n' + errors.slice(0, 3).join('\n');
-  //     if (errors.length > 3) {
-  //       message += `\n... and ${errors.length - 3} more`;
-  //     }
-  //   }
-  // }
 
   notification.textContent = message;
   notification.style.whiteSpace = 'pre-line';
