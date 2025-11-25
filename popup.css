@@ -18,7 +18,7 @@ body {
 h1 {
   font-size: 20px;
   margin-bottom: 16px;
-  color: #1a73e8;
+  color: #ec1436;
 }
 
 h2 {
@@ -48,7 +48,7 @@ h3 {
 }
 
 .section.settings {
-  border-left: 4px solid #34a853;
+  border-left: 4px solid #ec1436;
 }
 
 .setting-item {
@@ -83,8 +83,8 @@ h3 {
 
 .setting-item input[type="number"]:focus {
   outline: none;
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+  border-color: #ec1436;
+  box-shadow: 0 0 0 3px rgba(236, 20, 54, 0.1);
 }
 
 .toggle-label {
@@ -120,7 +120,7 @@ h3 {
   background: #f8f9fa;
   border-radius: 6px;
   margin-bottom: 8px;
-  border-left: 4px solid #1a73e8;
+  border-left: 4px solid #ec1436;
 }
 
 .rule-item.disabled {
@@ -164,13 +164,13 @@ h3 {
 }
 
 .btn-primary {
-  background: #1a73e8;
+  background: #ec1436;
   color: white;
   width: 100%;
 }
 
 .btn-primary:hover {
-  background: #1557b0;
+  background: #c51030;
 }
 
 .btn-secondary {
@@ -184,13 +184,13 @@ h3 {
 }
 
 .btn-success {
-  background: #34a853;
+  background: #ec1436;
   color: white;
   width: 100%;
 }
 
 .btn-success:hover {
-  background: #2d8e47;
+  background: #c51030;
 }
 
 .btn-small {
@@ -260,8 +260,8 @@ h3 {
 .form-group input[type="text"]:focus,
 .form-group input[type="email"]:focus {
   outline: none;
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+  border-color: #ec1436;
+  box-shadow: 0 0 0 3px rgba(236, 20, 54, 0.1);
 }
 
 .form-group input[type="checkbox"] {

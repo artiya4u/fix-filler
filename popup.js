@@ -249,7 +249,7 @@ async function fillCurrentPage() {
     // Show success message
     const originalText = fillNowBtn.textContent;
     fillNowBtn.textContent = 'Filled!';
-    fillNowBtn.style.background = '#2d8e47';
+    fillNowBtn.style.background = '#c51030';
     setTimeout(() => {
       fillNowBtn.textContent = originalText;
       fillNowBtn.style.background = '';
