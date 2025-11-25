@@ -40,14 +40,14 @@ async function saveRules() {
 // Load settings from storage
 async function loadSettings() {
   const result = await chrome.storage.sync.get(['autoFillEnabled', 'autoFillDelay']);
-  autoFillEnabledCheckbox.checked = result.autoFillEnabled !== undefined ? result.autoFillEnabled : false;
-  autoFillDelayInput.value = result.autoFillDelay !== undefined ? result.autoFillDelay : 500;
+  autoFillEnabledCheckbox.checked = result.autoFillEnabled !== undefined ? result.autoFillEnabled : true;
+  autoFillDelayInput.value = result.autoFillDelay !== undefined ? result.autoFillDelay : 100;
 }
 
 // Save settings to storage
 async function saveSettings() {
   const autoFillEnabled = autoFillEnabledCheckbox.checked;
-  const autoFillDelay = parseInt(autoFillDelayInput.value) || 500;
+  const autoFillDelay = parseInt(autoFillDelayInput.value) || 100;
 
   await chrome.storage.sync.set({
     autoFillEnabled,

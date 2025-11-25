@@ -348,8 +348,8 @@ async function autoFillOnLoad() {
     // Load settings from storage
     const result = await chrome.storage.sync.get(['autoFillEnabled', 'autoFillDelay', 'fillRules']);
 
-    const autoFillEnabled = result.autoFillEnabled || false;
-    const autoFillDelay = result.autoFillDelay || 500;
+    const autoFillEnabled = result.autoFillEnabled !== undefined ? result.autoFillEnabled : true;
+    const autoFillDelay = result.autoFillDelay !== undefined ? result.autoFillDelay : 100;
     const rules = result.fillRules || [];
 
     console.log('[Fix Filler] Auto-fill settings:', { autoFillEnabled, autoFillDelay, rulesCount: rules.length });

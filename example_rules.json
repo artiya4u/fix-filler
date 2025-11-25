@@ -7,22 +7,36 @@
       "input[name=\"r_idcard\"]",
       "input[name=\"idcard\"]"
     ],
-    "value": "1489900109999"
+    "value": "1489900185999"
   },
   {
     "enabled": true,
-    "name": "เบอร์โทรศัพท์ 10 หลัก",
+    "name": "ชื่อ",
     "selectors": [
-      "input[placeholder=\"กรุณาใส่เบอร์โทรศัพท์ 10 หลัก\"]",
-      "input[name=\"r_tel\"]"
+      "input[name=\"r_fname\"]"
     ],
-    "value": "0988889999"
+    "value": "ขับขี่"
   },
   {
     "enabled": true,
-    "name": "เลขตัวถังรถ",
+    "name": "สกุล",
     "selectors": [
-      "input[name=\"r_bodynumber\"]",
+      "input[name=\"r_lname\"]"
+    ],
+    "value": "ปลอดภัย"
+  },
+  {
+    "enabled": true,
+    "name": "เลขตัวถังรถ(ตัวพิมพ์เล็ก)",
+    "selectors": [
+      "input[name=\"r_bodynumber\"]"
+    ],
+    "value": "mlt3681s9999999"
+  },
+  {
+    "enabled": true,
+    "name": "เลขตัวถังรถ(ตัวพิมพ์ใหญ่)",
+    "selectors": [
       "input[name=\"bodynum\"]"
     ],
     "value": "mlt3681s9999999"
@@ -37,26 +51,19 @@
   },
   {
     "enabled": true,
+    "name": "เบอร์โทรศัพท์ 10 หลัก",
+    "selectors": [
+      "input[placeholder=\"กรุณาใส่เบอร์โทรศัพท์ 10 หลัก\"]",
+      "input[name=\"r_tel\"]"
+    ],
+    "value": "0988889999"
+  },
+  {
+    "enabled": true,
     "name": "เลขทะเบียน",
     "selectors": [
       "input[name=\"number\"]"
     ],
     "value": "4444"
-  },
-  {
-    "enabled": true,
-    "name": "ชื่อ",
-    "selectors": [
-      "input[name=\"r_fname\"]"
-    ],
-    "value": "นักรบ"
-  },
-  {
-    "enabled": true,
-    "name": "สกุล",
-    "selectors": [
-      "input[name=\"r_lname\"]"
-    ],
-    "value": "ปลอดภัย"
   }
 ]
